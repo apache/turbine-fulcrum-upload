@@ -25,6 +25,9 @@
 
   <body>
     <release version="1.0.4-dev" date="in SVN">
+     <action dev="tv" type="update" issue="TRB-13" due-to="Scott Eade">
+        Allow Non-ASCII characters in upload file names
+      </action>
      <action dev="tv" type="update" issue="TRB-32" due-to="Juergen Hofmann">
         Port parser fixes of  Turbine 2.3.2 over to the component.
       </action>

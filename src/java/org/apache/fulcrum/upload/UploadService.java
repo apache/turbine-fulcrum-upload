@@ -47,50 +47,50 @@ public interface UploadService
     /**
      * HTTP header.
      */
-    static final String CONTENT_TYPE = "Content-type";
+    String CONTENT_TYPE = "Content-type";
 
     /**
      * HTTP header.
      */
-    static final String CONTENT_DISPOSITION = "Content-disposition";
+    String CONTENT_DISPOSITION = "Content-disposition";
 
     /**
      * HTTP header base type.
      */
-    static final String MULTIPART = "multipart";
+    String MULTIPART = "multipart";
 
     /**
      * HTTP header base type modifier.
      */
-    static final String FORM_DATA = "form-data";
+    String FORM_DATA = "form-data";
 
     /**
      * HTTP header base type modifier.
      */
-    static final String MIXED = "mixed";
+    String MIXED = "mixed";
 
     /**
      * HTTP header.
      */
-    static final String MULTIPART_FORM_DATA =
+    String MULTIPART_FORM_DATA =
         MULTIPART + '/' + FORM_DATA;
 
     /**
      * HTTP header.
      */
-    static final String MULTIPART_MIXED = MULTIPART + '/' + MIXED;
+    String MULTIPART_MIXED = MULTIPART + '/' + MIXED;
 
     /**
      * The request parameter name for overriding 'repository' property
      * (path).
      */
-    static final String REPOSITORY_PARAMETER = "path";
+    String REPOSITORY_PARAMETER = "path";
 
     /**
      * The key in UploadService properties in
      * TurbineResources.properties 'repository' property.
      */
-    static final String REPOSITORY_KEY = "repository";
+    String REPOSITORY_KEY = "repository";
 
     /**
      * <p> The default value of 'repository' property (.).  This is
@@ -98,13 +98,13 @@ public interface UploadService
      * Note that "."  is whatever the servlet container chooses to be
      * it's 'current directory'.
      */
-    static final String REPOSITORY_DEFAULT = ".";
+    String REPOSITORY_DEFAULT = ".";
 
     /**
      * w The key in UploadService properties in
      * service configuration 'sizeMax' property.
      */
-    static final String SIZE_MAX_KEY = "sizeMax";
+    String SIZE_MAX_KEY = "sizeMax";
 
     /**
      * <p> The default value of 'sizMax' property (1 megabyte =
@@ -114,13 +114,13 @@ public interface UploadService
      * value, and use an action + no auto upload to enforce limits.
      *
      */
-    static final int SIZE_MAX_DEFAULT = 1048576;
+    int SIZE_MAX_DEFAULT = 1048576;
 
     /**
      * The key in UploadService properties in
      * TurbineResources.properties 'sizeThreshold' property.
      */
-    static final String SIZE_THRESHOLD_KEY = "sizeThreshold";
+    String SIZE_THRESHOLD_KEY = "sizeThreshold";
 
     /**
      * <p> The default value of 'sizeThreshold' property (10
@@ -128,8 +128,20 @@ public interface UploadService
      * request that will have it's components stored temporarily in
      * memory, instead of disk.
      */
-    static final int SIZE_THRESHOLD_DEFAULT = 10240;
+    int SIZE_THRESHOLD_DEFAULT = 10240;
 
+    /**
+     * The key in UploadService properties in
+     * TurbineResources.properties 'headerEncoding' property.
+     */
+    String HEADER_ENCODING_KEY = "headerEncoding";    
+
+    /**
+     * <p> The default value of 'headerEncoding' property (.).  
+     * The value has been decided by copying from DiskFileItem class
+     */
+    String HEADER_ENCODING_DEFAULT = "ISO-8859-1";
+    
     /**
      * <p>Parses a <a href="http://rf.cx/rfc1867.html">RFC 1867</a>
      * compliant <code>multipart/form-data</code> stream.</p>
@@ -191,4 +203,12 @@ public interface UploadService
      * @return The repository.
      */
     String getRepository();
+    
+    /**
+     * <p> Retrieves the value of the <code>headerEncoding</code> property of
+     * {@link org.apache.fulcrum.upload.UploadService}.
+     *
+     * @return Returns the headerEncoding.
+     */
+    String getHeaderEncoding();
 }

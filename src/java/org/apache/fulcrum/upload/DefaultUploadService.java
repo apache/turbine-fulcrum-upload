@@ -70,6 +70,7 @@ public class DefaultUploadService
     private int sizeMax;
 
     private String repositoryPath;
+    private String headerEncoding;
 
     /**
      * The application root
@@ -102,6 +103,14 @@ public class DefaultUploadService
     }
 
     /**
+     * @return Returns the headerEncoding.
+     */
+    public String getHeaderEncoding() 
+    {
+        return headerEncoding;
+    }
+    
+    /**
      * <p>Parses a <a href="http://rf.cx/rfc1867.html">RFC 1867</a>
      * compliant <code>multipart/form-data</code> stream.</p>
      *
@@ -112,16 +121,7 @@ public class DefaultUploadService
     public List parseRequest(HttpServletRequest req)
         throws ServiceException
     {
-        try
-        {
-            ServletFileUpload fileUpload = new ServletFileUpload(itemFactory);
-            fileUpload.setSizeMax(sizeMax);
-            return fileUpload.parseRequest(req);
-        }
-        catch (FileUploadException e)
-        {
-            throw new ServiceException(UploadService.ROLE, e.getMessage(), e);
-        }
+        return parseRequest(req, this.sizeMax, this.itemFactory);
     }
 
     /**
@@ -136,17 +136,7 @@ public class DefaultUploadService
     public List parseRequest(HttpServletRequest req, String path)
         throws ServiceException
     {
-        try
-        {
-            DiskFileItemFactory localItemFactory = new DiskFileItemFactory(sizeThreshold, new File(path));
-            ServletFileUpload fileUpload = new ServletFileUpload(localItemFactory);
-            fileUpload.setSizeMax(sizeMax);
-            return fileUpload.parseRequest(req);
-        }
-        catch (FileUploadException e)
-        {
-            throw new ServiceException(UploadService.ROLE, e.getMessage(), e);
-        }
+        return parseRequest(req, this.sizeThreshold, this.sizeMax, path);
     }
 
     /**
@@ -164,11 +154,28 @@ public class DefaultUploadService
                                   int sizeMax, String path)
             throws ServiceException
     {
+        return parseRequest(req, sizeMax, new DiskFileItemFactory(sizeThreshold, new File(path)));
+    }
+
+    /**
+     * <p>Parses a <a href="http://rf.cx/rfc1867.html">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.</p>
+     *
+     * @param req The servlet request to be parsed.
+     * @param sizeMax the maximum allowed upload size in bytes
+     * @param factory the file item factory to use
+     * 
+     * @exception ServiceException Problems reading/parsing the
+     * request or storing the uploaded file(s).
+     */
+    private List parseRequest(HttpServletRequest req, int sizeMax, DiskFileItemFactory factory)
+            throws ServiceException
+    {
         try
         {
-            DiskFileItemFactory localItemFactory = new DiskFileItemFactory(sizeThreshold, new File(path));
-            ServletFileUpload fileUpload = new ServletFileUpload(localItemFactory);
+            ServletFileUpload fileUpload = new ServletFileUpload(factory);
             fileUpload.setSizeMax(sizeMax);
+            fileUpload.setHeaderEncoding(headerEncoding);
             return fileUpload.parseRequest(req);
         }
         catch (FileUploadException e)
@@ -205,6 +212,10 @@ public class DefaultUploadService
                 UploadService.REPOSITORY_KEY,
                 UploadService.REPOSITORY_DEFAULT);
 
+        headerEncoding = conf.getAttribute(
+                UploadService.HEADER_ENCODING_KEY,
+                UploadService.HEADER_ENCODING_DEFAULT);
+        
         sizeMax = conf.getAttributeAsInteger(
                 UploadService.SIZE_MAX_KEY,
                 UploadService.SIZE_MAX_DEFAULT);

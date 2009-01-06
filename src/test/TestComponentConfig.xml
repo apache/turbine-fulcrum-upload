@@ -18,5 +18,5 @@
  under the License.
 -->
 <componentConfig>
-    <upload repository="target" sizeMax="1048576" sizeThreshold="10240"/>
+    <upload repository="target" sizeMax="1048576" sizeThreshold="10240" headerEncoding="UTF-8" />
 </componentConfig>
