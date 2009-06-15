@@ -7,16 +7,16 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>fulcrum-upload</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5-SNAPSHOT</version>
   <name>Fulcrum Upload</name>
   <inceptionYear>2005</inceptionYear>
   <description>Fulcrum Upload Service</description>
   <url>http://turbine.apache.org/fulcrum/fulcrum-upload</url>
 		
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/turbine/fulcrum/tags/FULCRUM_UPLOAD_1_0_4</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/turbine/fulcrum/tags/FULCRUM_UPLOAD_1_0_4</developerConnection>
-    <url>http://svn.apache.org/viewcvs/turbine/fulcrum/tags/FULCRUM_UPLOAD_1_0_4</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/turbine/fulcrum/trunk/upload/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/turbine/fulcrum/trunk/upload/</developerConnection>
+    <url>http://svn.apache.org/viewcvs/turbine/fulcrum/trunk/upload/</url>
   </scm>
 
   <distributionManagement>
