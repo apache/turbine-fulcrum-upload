@@ -19,17 +19,20 @@
 -->
 <document>
   <properties>
-    <title>Fulcrum BSF</title>
+    <title>Fulcrum Upload</title>
     <author email="epugh@opensourceconnections.com">Eric Pugh</author>
   </properties>
 
   <body>
-    <release version="1.0.4-dev" date="in SVN">
-     <action dev="tv" type="update" issue="TRB-13" due-to="Scott Eade">
+    <release version="1.0.4" date="2009-06-15">
+      <action dev="tv" type="add">
+        Added a Maven-2 build
+      </action>
+      <action dev="tv" type="update" issue="TRB-13" due-to="Scott Eade">
         Allow Non-ASCII characters in upload file names
       </action>
-     <action dev="tv" type="update" issue="TRB-32" due-to="Juergen Hofmann">
-        Port parser fixes of  Turbine 2.3.2 over to the component.
+      <action dev="tv" type="update" issue="TRB-32" due-to="Juergen Hofmann">
+        Port parser fixes of Turbine 2.3.2 over to the component.
       </action>
     </release>
     <release version="1.0.3" date="2004-11-24">
