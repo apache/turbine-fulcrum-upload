@@ -44,15 +44,15 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * <p> Files will be stored in temporary disk storage on in memory,
  * depending on request size, and will be available from the {@link
  * org.apache.fulcrum.util.parser.ParameterParser} as {@link
- * org.apache.fulcrum.upload.FileItem}s.
+ * org.apache.commons.fileupload.FileItem} objects.
  *
  * <p>This implementation of {@link UploadService} handles multiple
- * files per single html widget, sent using multipar/mixed encoding
+ * files per single html form, sent using multipart/form-data encoding
  * type, as specified by RFC 1867.  Use {@link
- * org.apache.fulcrum.util.parser.ParameterParser#getFileItems(String)} to
+ * org.apache.fulcrum.parser.ParameterParser#getFileItems(String)} to
  * acquire an array of {@link
- * org.apache.fulcrum.upload.FileItem}s associated with given
- * html widget.
+ * org.apache.commons.fileupload.FileItem} onjects associated with given
+ * html form.
  *
  * @author <a href="mailto:Rafal.Krzewski@e-point.pl">Rafal Krzewski</a>
  * @author <a href="mailto:dlr@collab.net">Daniel Rall</a>

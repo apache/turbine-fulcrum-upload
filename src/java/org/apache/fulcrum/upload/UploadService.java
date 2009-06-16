@@ -29,9 +29,9 @@ import org.apache.avalon.framework.service.ServiceException;
 
 /**
  * <p> This service handles parsing <code>multipart/form-data</code>
- * POST requests and turing them into form fields and uploaded files.
+ * POST requests and turning them into form fields and uploaded files.
  * This can be either performed automatically by the {@link
- * org.apache.fulcrum.util.parser.ParameterParser} or manually by an user
+ * org.apache.fulcrum.parser.ParameterParser} or manually by an user
  * definded {@link org.apache.turbine.modules.Action}.
  *
  * @author <a href="mailto:Rafal.Krzewski@e-point.pl">Rafal Krzewski</a>
@@ -94,7 +94,7 @@ public interface UploadService
 
     /**
      * <p> The default value of 'repository' property (.).  This is
-     * the directory where uploaded fiels will get stored temporarily.
+     * the directory where uploaded files will get stored temporarily.
      * Note that "."  is whatever the servlet container chooses to be
      * it's 'current directory'.
      */
