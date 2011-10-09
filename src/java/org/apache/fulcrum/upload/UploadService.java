@@ -26,6 +26,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.avalon.framework.service.ServiceException;
+import org.apache.commons.fileupload.FileItem;
 
 /**
  * <p> This service handles parsing <code>multipart/form-data</code>
@@ -134,14 +135,14 @@ public interface UploadService
      * The key in UploadService properties in
      * TurbineResources.properties 'headerEncoding' property.
      */
-    String HEADER_ENCODING_KEY = "headerEncoding";    
+    String HEADER_ENCODING_KEY = "headerEncoding";
 
     /**
-     * <p> The default value of 'headerEncoding' property (.).  
+     * <p> The default value of 'headerEncoding' property (.).
      * The value has been decided by copying from DiskFileItem class
      */
     String HEADER_ENCODING_DEFAULT = "ISO-8859-1";
-    
+
     /**
      * <p>Parses a <a href="http://rf.cx/rfc1867.html">RFC 1867</a>
      * compliant <code>multipart/form-data</code> stream.</p>
@@ -150,7 +151,7 @@ public interface UploadService
      * @exception ServiceException Problems reading/parsing the
      * request or storing the uploaded file(s).
      */
-    List parseRequest(HttpServletRequest req)
+    List<FileItem> parseRequest(HttpServletRequest req)
         throws ServiceException;
 
     /**
@@ -162,7 +163,7 @@ public interface UploadService
      * @exception ServiceException Problems reading/parsing the
      * request or storing the uploaded file(s).
      */
-    List parseRequest(HttpServletRequest req, String path)
+    List<FileItem> parseRequest(HttpServletRequest req, String path)
         throws ServiceException;
 
     /**
@@ -176,7 +177,7 @@ public interface UploadService
      * @exception ServiceException Problems reading/parsing the
      * request or storing the uploaded file(s).
      */
-    List parseRequest(HttpServletRequest req, int sizeThreshold,
+    List<FileItem> parseRequest(HttpServletRequest req, int sizeThreshold,
         int sizeMax, String path)
         throws ServiceException;
 
@@ -203,7 +204,7 @@ public interface UploadService
      * @return The repository.
      */
     String getRepository();
-    
+
     /**
      * <p> Retrieves the value of the <code>headerEncoding</code> property of
      * {@link org.apache.fulcrum.upload.UploadService}.

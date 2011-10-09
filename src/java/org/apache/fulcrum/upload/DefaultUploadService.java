@@ -34,6 +34,7 @@ import org.apache.avalon.framework.context.ContextException;
 import org.apache.avalon.framework.context.Contextualizable;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.service.ServiceException;
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -105,11 +106,11 @@ public class DefaultUploadService
     /**
      * @return Returns the headerEncoding.
      */
-    public String getHeaderEncoding() 
+    public String getHeaderEncoding()
     {
         return headerEncoding;
     }
-    
+
     /**
      * <p>Parses a <a href="http://rf.cx/rfc1867.html">RFC 1867</a>
      * compliant <code>multipart/form-data</code> stream.</p>
@@ -118,7 +119,7 @@ public class DefaultUploadService
      * @exception ServiceException Problems reading/parsing the
      * request or storing the uploaded file(s).
      */
-    public List parseRequest(HttpServletRequest req)
+    public List<FileItem> parseRequest(HttpServletRequest req)
         throws ServiceException
     {
         return parseRequest(req, this.sizeMax, this.itemFactory);
@@ -133,7 +134,7 @@ public class DefaultUploadService
      * @exception ServiceException Problems reading/parsing the
      * request or storing the uploaded file(s).
      */
-    public List parseRequest(HttpServletRequest req, String path)
+    public List<FileItem> parseRequest(HttpServletRequest req, String path)
         throws ServiceException
     {
         return parseRequest(req, this.sizeThreshold, this.sizeMax, path);
@@ -150,7 +151,7 @@ public class DefaultUploadService
      * @exception ServiceException Problems reading/parsing the
      * request or storing the uploaded file(s).
      */
-    public List parseRequest(HttpServletRequest req, int sizeThreshold,
+    public List<FileItem> parseRequest(HttpServletRequest req, int sizeThreshold,
                                   int sizeMax, String path)
             throws ServiceException
     {
@@ -164,11 +165,11 @@ public class DefaultUploadService
      * @param req The servlet request to be parsed.
      * @param sizeMax the maximum allowed upload size in bytes
      * @param factory the file item factory to use
-     * 
+     *
      * @exception ServiceException Problems reading/parsing the
      * request or storing the uploaded file(s).
      */
-    private List parseRequest(HttpServletRequest req, int sizeMax, DiskFileItemFactory factory)
+    protected List<FileItem> parseRequest(HttpServletRequest req, int sizeMax, DiskFileItemFactory factory)
             throws ServiceException
     {
         try
@@ -215,7 +216,7 @@ public class DefaultUploadService
         headerEncoding = conf.getAttribute(
                 UploadService.HEADER_ENCODING_KEY,
                 UploadService.HEADER_ENCODING_DEFAULT);
-        
+
         sizeMax = conf.getAttributeAsInteger(
                 UploadService.SIZE_MAX_KEY,
                 UploadService.SIZE_MAX_DEFAULT);
