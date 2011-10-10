@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.avalon.framework.service.ServiceException;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemIterator;
 
 /**
  * <p> This service handles parsing <code>multipart/form-data</code>
@@ -181,6 +182,27 @@ public interface UploadService
         int sizeMax, String path)
         throws ServiceException;
 
+
+    /**
+     * Processes an <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.
+     *
+     * @param request The servlet request to be parsed.
+     *
+     * @return An iterator to instances of <code>FileItemStream</code>
+     *         parsed from the request, in the order that they were
+     *         transmitted.
+     *
+     * @throws ServiceException if there are problems reading/parsing
+     *                             the request or storing files. This 
+     *                             may also be a network error while 
+     *                             communicating with the client or a 
+     *                             problem while storing the uploaded 
+     *                             content.
+     */
+    FileItemIterator getItemIterator(HttpServletRequest req) throws ServiceException;
+    
+    
     /**
      * <p> Retrieves the value of <code>size.max</code> property of the
      * {@link org.apache.fulcrum.upload.UploadService}.
@@ -212,4 +234,16 @@ public interface UploadService
      * @return Returns the headerEncoding.
      */
     String getHeaderEncoding();
+
+    /**
+     * Utility method that determines whether the request contains multipart
+     * content.
+     *
+     * @param request The servlet request to be evaluated. Must be non-null.
+     *
+     * @return <code>true</code> if the request is multipart;
+     *         <code>false</code> otherwise.
+     */    
+    boolean isMultipart(HttpServletRequest req);
+    
 }

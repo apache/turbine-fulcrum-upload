@@ -22,6 +22,7 @@ package org.apache.fulcrum.upload;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ import org.apache.avalon.framework.context.Contextualizable;
 import org.apache.avalon.framework.logger.AbstractLogEnabled;
 import org.apache.avalon.framework.service.ServiceException;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -252,5 +254,52 @@ public class DefaultUploadService
     public void contextualize(Context context) throws ContextException
     {
         this.applicationRoot = context.get( "urn:avalon:home" ).toString();
+    }
+
+    /**
+     * Processes an <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.
+     *
+     * @param request The servlet request to be parsed.
+     *
+     * @return An iterator to instances of <code>FileItemStream</code>
+     *         parsed from the request, in the order that they were
+     *         transmitted.
+     *
+     * @throws ServiceException if there are problems reading/parsing
+     *                             the request or storing files. This 
+     *                             may also be a network error while 
+     *                             communicating with the client or a 
+     *                             problem while storing the uploaded 
+     *                             content.
+     */    
+    public FileItemIterator getItemIterator(HttpServletRequest req) throws ServiceException {
+        ServletFileUpload upload = new ServletFileUpload();
+        try
+        {
+            return upload.getItemIterator(req);
+        } 
+        catch (FileUploadException e)
+        {
+            throw new ServiceException(UploadService.ROLE, e.getMessage(), e);
+        } 
+        catch (IOException e)
+        {
+            throw new ServiceException(UploadService.ROLE, e.getMessage(), e);
+        }        
+    }
+
+    /**
+     * Utility method that determines whether the request contains multipart
+     * content.
+     *
+     * @param request The servlet request to be evaluated. Must be non-null.
+     *
+     * @return <code>true</code> if the request is multipart;
+     *         <code>false</code> otherwise.
+     */      
+    public boolean isMultipart(HttpServletRequest req)
+    {
+        return ServletFileUpload.isMultipartContent(req);
     }
 }
