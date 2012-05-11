@@ -24,6 +24,17 @@
   </properties>
 
   <body>
+    <release version="1.0.5" date="2012-05-11">
+      <action dev="ludwig" type="update">
+        Add methods to use the streaming API
+      </action>
+      <action dev="ludwig" type="update">
+        Update dependency commons-fileupload to 1.2.2
+      </action>
+      <action dev="tv" type="update">
+        Move to JDK 1.5
+      </action>
+    </release>
     <release version="1.0.4" date="2009-06-15">
       <action dev="tv" type="add">
         Added a Maven-2 build
