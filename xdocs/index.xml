@@ -39,45 +39,68 @@ specified location on the file system.
     </p>
   </section>
 
-<section name="Configuration">
+  <section name="Configuration">
+    <subsection name="Role Configuration">
+      <source><![CDATA[
+<role
+    name="org.apache.fulcrum.upload.UploadService"
+    shorthand="upload"
+    default-class="org.apache.fulcrum.upload.DefaultUploadService"/>
+      ]]></source>
+    </subsection>
+    
+    <subsection name="Component Configuration">
+      <table>
+        <tr>
+          <th>Item</th>
+          <th>Datatype</th>
+          <th>Cardinality</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>repository</td>
+          <td>String</td>
+          <td>[0|1]</td>
+          <td>
+          The directory where files will be temporarily stored (default is ".").
+          On Win32 file systems an entry of the form 
+          <code>f:\path\to\upload\repository</code> is most likely necessary.
+          </td>
+        </tr>
+        <tr>
+          <td>sizeMax</td>
+          <td>Integer</td>
+          <td>[0|1]</td>
+          <td>
+          The maximum size of a request that will be processed 
+          (default is 1048576 bytes).
+          </td>
+        </tr>
+        <tr>
+          <td>sizeThreshold</td>
+          <td>Integer</td>
+          <td>[0|1]</td>
+          <td>
+          The maximum size of a request that will have it's elements cached in 
+          memory (default is 10240 bytes).
+          </td>
+        </tr>
+        <tr>
+          <td>headerEncoding</td>
+          <td>String</td>
+          <td>[0|1]</td>
+          <td>
+          Used to specify how the headers are encoded (default is "ISO-8859-1").
+          </td>
+        </tr>
+      </table>
+    </subsection>
 
-    <p>
-      First, here is the role configuration.
-    </p>
-
-    <source>
-    <![CDATA[
-        <role
-            name="org.apache.fulcrum.upload.UploadService"
-            shorthand="upload"
-            default-class="org.apache.fulcrum.upload.DefaultUploadService"/>
-    ]]>
-    </source>
-
-      <p>
-        And here is the configuration:
-      </p>
-    <source>
-
-    <![CDATA[
-        <upload repository="target" sizeMax="1048576" sizeThreshold="10240" headerEncoding="UTF-8"/>
-    ]]>
-    </source>
-<p>
-repository is the directory where files will be temporarily stored (default is ".").
-On Win32 file systems an entry of the form <code>f:\path\to\upload\repository</code>
-is most likely necessary.
-</p>
-<p>
-sizeMax is the maximum size of a request that will be processed (default is 1048576 bytes).
-</p>
-<p>
-sizeThreshold is the maximum size of a request that will have it's elements cached in memory (default is 10240 bytes).
-</p>
-<p>
-headerEncoding is used to specify how the headers are encoded (default is "ISO-8859-1").
-</p>
-
+    <subsection name="Component Configuration Example">
+      <source><![CDATA[
+<upload repository="target" sizeMax="1048576" sizeThreshold="10240" headerEncoding="UTF-8"/>
+      ]]></source>
+    </subsection>
   </section>
 
   <section name="Usage">
@@ -87,13 +110,11 @@ Create an HTML form of the type:
 </p>
 
 <source test=""><![CDATA[
-
 <form enctype="multipart/form-data" method="POST">
-<input type="hidden" name="action" value="UploadExample" />
-<input type="file" name="filename">
-<input type="submit" value="upload" />
+  <input type="hidden" name="action" value="UploadExample" />
+  <input type="file" name="filename">
+  <input type="submit" value="upload" />
 </form>
-
 ]]></source>
 
 <p>
@@ -107,8 +128,8 @@ Typically a request would be parsed using the Fulcrum ParameterParser service,
 but you can achieve this manually thus:
 </p>
 <source test=""><![CDATA[
-    UploadService us = (UploadService) this.lookup(UploadService.ROLE);
-    List fileItems = us.parse(request);
+UploadService us = (UploadService) this.lookup(UploadService.ROLE);
+List fileItems = us.parse(request);
 ]]></source>
 
 <p>
