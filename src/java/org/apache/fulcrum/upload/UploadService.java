@@ -34,7 +34,7 @@ import org.apache.commons.fileupload.FileItemIterator;
  * POST requests and turning them into form fields and uploaded files.
  * This can be either performed automatically by the {@link
  * org.apache.fulcrum.parser.ParameterParser} or manually by an user
- * definded {@link org.apache.turbine.modules.Action}.
+ * defined {@link org.apache.turbine.modules.Action}.
  *
  * @author <a href="mailto:Rafal.Krzewski@e-point.pl">Rafal Krzewski</a>
  * @author <a href="mailto:dlr@collab.net">Daniel Rall</a>
@@ -145,7 +145,7 @@ public interface UploadService
     String HEADER_ENCODING_DEFAULT = "ISO-8859-1";
 
     /**
-     * <p>Parses a <a href="http://rf.cx/rfc1867.html">RFC 1867</a>
+     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
      * compliant <code>multipart/form-data</code> stream.</p>
      *
      * @param req The servlet request to be parsed.
@@ -156,7 +156,7 @@ public interface UploadService
         throws ServiceException;
 
     /**
-     * <p>Parses a <a href="http://rf.cx/rfc1867.html">RFC 1867</a>
+     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
      * compliant <code>multipart/form-data</code> stream.</p>
      *
      * @param req The servlet request to be parsed.
@@ -168,7 +168,7 @@ public interface UploadService
         throws ServiceException;
 
     /**
-     * <p>Parses a <a href="http://rf.cx/rfc1867.html">RFC 1867</a>
+     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
      * compliant <code>multipart/form-data</code> stream.</p>
      *
      * @param req The servlet request to be parsed.
@@ -187,22 +187,22 @@ public interface UploadService
      * Processes an <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
      * compliant <code>multipart/form-data</code> stream.
      *
-     * @param request The servlet request to be parsed.
+     * @param req The servlet request to be parsed.
      *
      * @return An iterator to instances of <code>FileItemStream</code>
      *         parsed from the request, in the order that they were
      *         transmitted.
      *
      * @throws ServiceException if there are problems reading/parsing
-     *                             the request or storing files. This 
-     *                             may also be a network error while 
-     *                             communicating with the client or a 
-     *                             problem while storing the uploaded 
+     *                             the request or storing files. This
+     *                             may also be a network error while
+     *                             communicating with the client or a
+     *                             problem while storing the uploaded
      *                             content.
      */
     FileItemIterator getItemIterator(HttpServletRequest req) throws ServiceException;
-    
-    
+
+
     /**
      * <p> Retrieves the value of <code>size.max</code> property of the
      * {@link org.apache.fulcrum.upload.UploadService}.
@@ -239,11 +239,11 @@ public interface UploadService
      * Utility method that determines whether the request contains multipart
      * content.
      *
-     * @param request The servlet request to be evaluated. Must be non-null.
+     * @param req The servlet request to be evaluated. Must be non-null.
      *
      * @return <code>true</code> if the request is multipart;
      *         <code>false</code> otherwise.
-     */    
+     */
     boolean isMultipart(HttpServletRequest req);
-    
+
 }
