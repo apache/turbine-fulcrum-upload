@@ -23,6 +23,7 @@ package org.apache.fulcrum.upload;
 
 import java.util.List;
 
+import javax.portlet.ActionRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.avalon.framework.service.ServiceException;
@@ -201,6 +202,65 @@ public interface UploadService
      *                             content.
      */
     FileItemIterator getItemIterator(HttpServletRequest req) throws ServiceException;
+
+
+    /**
+     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.</p>
+     *
+     * @param req The portlet request to be parsed.
+     * @exception ServiceException Problems reading/parsing the
+     * request or storing the uploaded file(s).
+     */
+    List<FileItem> parseRequest(ActionRequest req)
+        throws ServiceException;
+
+    /**
+     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.</p>
+     *
+     * @param req The portlet request to be parsed.
+     * @param path The location where the files should be stored.
+     * @exception ServiceException Problems reading/parsing the
+     * request or storing the uploaded file(s).
+     */
+    List<FileItem> parseRequest(ActionRequest req, String path)
+        throws ServiceException;
+
+    /**
+     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.</p>
+     *
+     * @param req The portlet request to be parsed.
+     * @param sizeThreshold the max size in bytes to be stored in memory
+     * @param sizeMax the maximum allowed upload size in bytes
+     * @param path The location where the files should be stored.
+     * @exception ServiceException Problems reading/parsing the
+     * request or storing the uploaded file(s).
+     */
+    List<FileItem> parseRequest(ActionRequest req, int sizeThreshold,
+        int sizeMax, String path)
+        throws ServiceException;
+
+
+    /**
+     * Processes an <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.
+     *
+     * @param req The portlet request to be parsed.
+     *
+     * @return An iterator to instances of <code>FileItemStream</code>
+     *         parsed from the request, in the order that they were
+     *         transmitted.
+     *
+     * @throws ServiceException if there are problems reading/parsing
+     *                             the request or storing files. This
+     *                             may also be a network error while
+     *                             communicating with the client or a
+     *                             problem while storing the uploaded
+     *                             content.
+     */
+    FileItemIterator getItemIterator(ActionRequest req) throws ServiceException;
 
 
     /**

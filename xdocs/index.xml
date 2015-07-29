@@ -17,99 +17,102 @@
  specific language governing permissions and limitations
  under the License.
 -->
-
 <document>
 
-  <properties>
-    <title>Upload Component</title>
-    <author email="epugh@opensourceconnections.com">Eric Pugh</author>
-  </properties>
+	<properties>
+		<title>Upload Component</title>
+		<author email="epugh@opensourceconnections.com">Eric Pugh</author>
+	</properties>
 
-  <body>
+	<body>
 
-  <section name="Overview">
-<p>
-The Upload Service handles the parsing of multi-part/form-data from POST
-Requests, making the multi-part files available from either memory or from a
-specified location on the file system.
-</p>
+		<section name="Overview">
+			<p>
+				The Upload Service handles the parsing of multi-part/form-data from
+				POST Requests for Servlets and Portlets, making the multi-part files available
+				from either memory or from a specified location on the file system.
+			</p>
 
-    <p>
-      It is written for use in Turbine but it can be used in Avalon compatible container.
-    </p>
-  </section>
+			<p>
+				It is written for use in Turbine but it can be used in Avalon
+				compatible container.
+			</p>
+		</section>
 
-  <section name="Configuration">
-    <subsection name="Role Configuration">
-      <source><![CDATA[
+		<section name="Configuration">
+			<subsection name="Role Configuration">
+				<source><![CDATA[
 <role
     name="org.apache.fulcrum.upload.UploadService"
     shorthand="upload"
     default-class="org.apache.fulcrum.upload.DefaultUploadService"/>
-      ]]></source>
-    </subsection>
-    
-    <subsection name="Component Configuration">
-      <table>
-        <tr>
-          <th>Item</th>
-          <th>Datatype</th>
-          <th>Cardinality</th>
-          <th>Description</th>
-        </tr>
-        <tr>
-          <td>repository</td>
-          <td>String</td>
-          <td>[0|1]</td>
-          <td>
-          The directory where files will be temporarily stored (default is ".").
-          On Win32 file systems an entry of the form 
-          <code>f:\path\to\upload\repository</code> is most likely necessary.
-          </td>
-        </tr>
-        <tr>
-          <td>sizeMax</td>
-          <td>Integer</td>
-          <td>[0|1]</td>
-          <td>
-          The maximum size of a request that will be processed 
-          (default is 1048576 bytes).
-          </td>
-        </tr>
-        <tr>
-          <td>sizeThreshold</td>
-          <td>Integer</td>
-          <td>[0|1]</td>
-          <td>
-          The maximum size of a request that will have it's elements cached in 
-          memory (default is 10240 bytes).
-          </td>
-        </tr>
-        <tr>
-          <td>headerEncoding</td>
-          <td>String</td>
-          <td>[0|1]</td>
-          <td>
-          Used to specify how the headers are encoded (default is "ISO-8859-1").
-          </td>
-        </tr>
-      </table>
-    </subsection>
+]]></source>
+			</subsection>
 
-    <subsection name="Component Configuration Example">
-      <source><![CDATA[
+			<subsection name="Component Configuration">
+				<table>
+					<tr>
+						<th>Item</th>
+						<th>Datatype</th>
+						<th>Cardinality</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>repository</td>
+						<td>String</td>
+						<td>[0|1]</td>
+						<td>
+							The directory where files will be temporarily stored (default is
+							".").
+							On Win32 file systems an entry of the form
+							<code>f:\path\to\upload\repository</code>
+							is most likely necessary.
+						</td>
+					</tr>
+					<tr>
+						<td>sizeMax</td>
+						<td>Integer</td>
+						<td>[0|1]</td>
+						<td>
+							The maximum size of a request that will be processed
+							(default is 1048576 bytes).
+						</td>
+					</tr>
+					<tr>
+						<td>sizeThreshold</td>
+						<td>Integer</td>
+						<td>[0|1]</td>
+						<td>
+							The maximum size of a request that will have it's elements cached in
+							memory (default is 10240 bytes).
+						</td>
+					</tr>
+					<tr>
+						<td>headerEncoding</td>
+						<td>String</td>
+						<td>[0|1]</td>
+						<td>
+							Used to specify how the headers are encoded (default is
+							"ISO-8859-1").
+						</td>
+					</tr>
+				</table>
+			</subsection>
+
+			<subsection name="Component Configuration Example">
+				<source><![CDATA[
 <upload repository="target" sizeMax="1048576" sizeThreshold="10240" headerEncoding="UTF-8"/>
-      ]]></source>
-    </subsection>
-  </section>
+]]></source>
+			</subsection>
+		</section>
 
-  <section name="Usage">
+		<section name="Usage">
 
-<p>
-Create an HTML form of the type:
-</p>
+			<p>
+				Create an HTML form of the type:
+			</p>
 
-<source test=""><![CDATA[
+			<source test=""><![CDATA[
 <form enctype="multipart/form-data" method="POST">
   <input type="hidden" name="action" value="UploadExample" />
   <input type="file" name="filename">
@@ -117,30 +120,32 @@ Create an HTML form of the type:
 </form>
 ]]></source>
 
-<p>
-The Upload Service manages the storage of the FileItem in memory or at the
-configured repository location in the file system. It is also possible to
-override the repository location using the overloaded parseRequest() methods.
-</p>
+			<p>
+				The Upload Service manages the storage of the FileItem in memory or at
+				the configured repository location in the file system. It is also possible to
+				override the repository location using the overloaded parseRequest()
+				methods.
+			</p>
 
-<p>
-Typically a request would be parsed using the Fulcrum ParameterParser service,
-but you can achieve this manually thus:
-</p>
-<source test=""><![CDATA[
+			<p>
+				Typically a request would be parsed using the Fulcrum ParameterParser
+				service, but you can achieve this manually thus:
+			</p>
+			<source test=""><![CDATA[
 UploadService us = (UploadService) this.lookup(UploadService.ROLE);
 List fileItems = us.parse(request);
 ]]></source>
 
-<p>
-FileItem provides many methods for working with the uploaded files that will
-function whether a file is loaded into memory or as a temporary file.
-All the temporary storage management and clean up occurs behind the scenes
-transparently to your application. FileItem objects do not span Requests, 
-finalizers remove any temporary files created along the way.
-</p>
+			<p>
+				FileItem provides many methods for working with the uploaded files that will
+				function whether a file is loaded into memory or as a temporary
+				file.
+				All the temporary storage management and clean up occurs behind the
+				scenes transparently to your application. FileItem objects do not span Requests,
+				finalizers remove any temporary files created along the way.
+			</p>
 
-  </section>
+		</section>
 
-</body>
+	</body>
 </document>

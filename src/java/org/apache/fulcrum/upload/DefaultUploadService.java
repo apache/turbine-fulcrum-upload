@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.portlet.ActionRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.avalon.framework.activity.Initializable;
@@ -39,6 +40,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.portlet.PortletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 /**
@@ -83,7 +85,8 @@ public class DefaultUploadService
     /**
      * The maximum allowed upload size
      */
-    public long getSizeMax()
+    @Override
+	public long getSizeMax()
     {
         return sizeMax;
     }
@@ -91,7 +94,8 @@ public class DefaultUploadService
     /**
      * The threshold beyond which files are written directly to disk.
      */
-    public long getSizeThreshold()
+    @Override
+	public long getSizeThreshold()
     {
         return itemFactory.getSizeThreshold();
     }
@@ -100,7 +104,8 @@ public class DefaultUploadService
      * The location used to temporarily store files that are larger
      * than the size threshold.
      */
-    public String getRepository()
+    @Override
+	public String getRepository()
     {
         return itemFactory.getRepository().getAbsolutePath();
     }
@@ -108,7 +113,8 @@ public class DefaultUploadService
     /**
      * @return Returns the headerEncoding.
      */
-    public String getHeaderEncoding()
+    @Override
+	public String getHeaderEncoding()
     {
         return headerEncoding;
     }
@@ -121,7 +127,8 @@ public class DefaultUploadService
      * @exception ServiceException Problems reading/parsing the
      * request or storing the uploaded file(s).
      */
-    public List<FileItem> parseRequest(HttpServletRequest req)
+    @Override
+	public List<FileItem> parseRequest(HttpServletRequest req)
         throws ServiceException
     {
         return parseRequest(req, this.sizeMax, this.itemFactory);
@@ -136,7 +143,8 @@ public class DefaultUploadService
      * @exception ServiceException Problems reading/parsing the
      * request or storing the uploaded file(s).
      */
-    public List<FileItem> parseRequest(HttpServletRequest req, String path)
+    @Override
+	public List<FileItem> parseRequest(HttpServletRequest req, String path)
         throws ServiceException
     {
         return parseRequest(req, this.sizeThreshold, this.sizeMax, path);
@@ -153,7 +161,8 @@ public class DefaultUploadService
      * @exception ServiceException Problems reading/parsing the
      * request or storing the uploaded file(s).
      */
-    public List<FileItem> parseRequest(HttpServletRequest req, int sizeThreshold,
+    @Override
+	public List<FileItem> parseRequest(HttpServletRequest req, int sizeThreshold,
                                   int sizeMax, String path)
             throws ServiceException
     {
@@ -171,7 +180,6 @@ public class DefaultUploadService
      * @exception ServiceException Problems reading/parsing the
      * request or storing the uploaded file(s).
      */
-    @SuppressWarnings("unchecked")
     protected List<FileItem> parseRequest(HttpServletRequest req, int sizeMax, DiskFileItemFactory factory)
             throws ServiceException
     {
@@ -205,9 +213,122 @@ public class DefaultUploadService
      *                             problem while storing the uploaded
      *                             content.
      */
-    public FileItemIterator getItemIterator(HttpServletRequest req) throws ServiceException
+    @Override
+	public FileItemIterator getItemIterator(HttpServletRequest req) throws ServiceException
     {
         ServletFileUpload upload = new ServletFileUpload();
+        try
+        {
+            return upload.getItemIterator(req);
+        }
+        catch (FileUploadException e)
+        {
+            throw new ServiceException(UploadService.ROLE, e.getMessage(), e);
+        }
+        catch (IOException e)
+        {
+            throw new ServiceException(UploadService.ROLE, e.getMessage(), e);
+        }
+    }
+
+    /**
+     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.</p>
+     *
+     * @param req The portlet request to be parsed.
+     * @exception ServiceException Problems reading/parsing the
+     * request or storing the uploaded file(s).
+     */
+    @Override
+	public List<FileItem> parseRequest(ActionRequest req)
+        throws ServiceException
+    {
+        return parseRequest(req, this.sizeMax, this.itemFactory);
+    }
+
+    /**
+     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.</p>
+     *
+     * @param req The portlet request to be parsed.
+     * @param path The location where the files should be stored.
+     * @exception ServiceException Problems reading/parsing the
+     * request or storing the uploaded file(s).
+     */
+    @Override
+	public List<FileItem> parseRequest(ActionRequest req, String path)
+        throws ServiceException
+    {
+        return parseRequest(req, this.sizeThreshold, this.sizeMax, path);
+    }
+
+    /**
+     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.</p>
+     *
+     * @param req The portlet request to be parsed.
+     * @param sizeThreshold the max size in bytes to be stored in memory
+     * @param sizeMax the maximum allowed upload size in bytes
+     * @param path The location where the files should be stored.
+     * @exception ServiceException Problems reading/parsing the
+     * request or storing the uploaded file(s).
+     */
+    @Override
+	public List<FileItem> parseRequest(ActionRequest req, int sizeThreshold,
+                                  int sizeMax, String path)
+            throws ServiceException
+    {
+        return parseRequest(req, sizeMax, new DiskFileItemFactory(sizeThreshold, new File(path)));
+    }
+
+    /**
+     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.</p>
+     *
+     * @param req The portlet request to be parsed.
+     * @param sizeMax the maximum allowed upload size in bytes
+     * @param factory the file item factory to use
+     *
+     * @exception ServiceException Problems reading/parsing the
+     * request or storing the uploaded file(s).
+     */
+    protected List<FileItem> parseRequest(ActionRequest req, int sizeMax, DiskFileItemFactory factory)
+            throws ServiceException
+    {
+        try
+        {
+            PortletFileUpload fileUpload = new PortletFileUpload(factory);
+            fileUpload.setSizeMax(sizeMax);
+            fileUpload.setHeaderEncoding(headerEncoding);
+            return fileUpload.parseRequest(req);
+        }
+        catch (FileUploadException e)
+        {
+            throw new ServiceException(UploadService.ROLE, e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Processes an <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * compliant <code>multipart/form-data</code> stream.
+     *
+     * @param req The portlet request to be parsed.
+     *
+     * @return An iterator to instances of <code>FileItemStream</code>
+     *         parsed from the request, in the order that they were
+     *         transmitted.
+     *
+     * @throws ServiceException if there are problems reading/parsing
+     *                             the request or storing files. This
+     *                             may also be a network error while
+     *                             communicating with the client or a
+     *                             problem while storing the uploaded
+     *                             content.
+     */
+    @Override
+	public FileItemIterator getItemIterator(ActionRequest req) throws ServiceException
+    {
+        PortletFileUpload upload = new PortletFileUpload();
         try
         {
             return upload.getItemIterator(req);
@@ -231,7 +352,8 @@ public class DefaultUploadService
      * @return <code>true</code> if the request is multipart;
      *         <code>false</code> otherwise.
      */
-    public boolean isMultipart(HttpServletRequest req)
+    @Override
+	public boolean isMultipart(HttpServletRequest req)
     {
         return ServletFileUpload.isMultipartContent(req);
     }
@@ -258,7 +380,8 @@ public class DefaultUploadService
     /**
      * Avalon component lifecycle method
      */
-    public void configure(Configuration conf)
+    @Override
+	public void configure(Configuration conf)
     {
         repositoryPath = conf.getAttribute(
                 UploadService.REPOSITORY_KEY,
@@ -285,7 +408,8 @@ public class DefaultUploadService
      * This method processes the repository path, to make it relative to the
      * web application root, if necessary
      */
-    public void initialize() throws Exception
+    @Override
+	public void initialize() throws Exception
     {
         // test for the existence of the path within the webapp directory.
         // if it does not exist, assume the path was to be used as is.
@@ -305,7 +429,8 @@ public class DefaultUploadService
     /**
      * Avalon component lifecycle method
      */
-    public void contextualize(Context context) throws ContextException
+    @Override
+	public void contextualize(Context context) throws ContextException
     {
         this.applicationRoot = context.get( "urn:avalon:home" ).toString();
     }
