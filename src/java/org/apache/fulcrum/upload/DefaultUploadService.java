@@ -359,6 +359,21 @@ public class DefaultUploadService
     }
 
     /**
+     * Utility method that determines whether the request contains multipart
+     * content.
+     *
+     * @param req The portlet request to be evaluated. Must be non-null.
+     *
+     * @return <code>true</code> if the request is multipart;
+     *         <code>false</code> otherwise.
+     */
+    @Override
+	public boolean isMultipart(ActionRequest req)
+    {
+        return PortletFileUpload.isMultipartContent(req);
+    }
+
+    /**
      * @see org.apache.fulcrum.ServiceBroker#getRealPath(String)
      */
     private String getRealPath(String path)

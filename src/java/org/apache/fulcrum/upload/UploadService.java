@@ -306,4 +306,14 @@ public interface UploadService
      */
     boolean isMultipart(HttpServletRequest req);
 
+    /**
+     * Utility method that determines whether the request contains multipart
+     * content.
+     *
+     * @param req The portlet request to be evaluated. Must be non-null.
+     *
+     * @return <code>true</code> if the request is multipart;
+     *         <code>false</code> otherwise.
+     */
+    boolean isMultipart(ActionRequest req);
 }
