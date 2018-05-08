@@ -1,5 +1,18 @@
 package org.apache.fulcrum.upload;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayInputStream;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,32 +34,39 @@ package org.apache.fulcrum.upload;
 
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.avalon.framework.component.ComponentException;
-import org.apache.fulcrum.testcontainer.BaseUnitTest;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.fulcrum.testcontainer.BaseUnit4Test;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 /**
  * UploadServiceTest
  *
  * @author <a href="epugh@upstate.com">Eric Pugh</a>
  * @version $Id$
  */
-public class UploadServiceTest extends BaseUnitTest
+public class UploadServiceTest extends BaseUnit4Test
 {
     private UploadService uploadService = null;
 
-    /**
-     * Defines the testcase name for JUnit.
-     *
-     * @param name the testcase's name.
-     */
-    public UploadServiceTest(String name)
-    {
-        super(name);
-    }
 
-    protected void setUp() throws Exception
+    @Before
+    public void setUp() throws Exception
     {
-        super.setUp();
         try
         {
             uploadService = (UploadService) this.lookup(UploadService.ROLE);
@@ -61,10 +81,132 @@ public class UploadServiceTest extends BaseUnitTest
      * Simple test that verify an object can be created and deleted.
      * @throws Exception
      */
+    @Test
     public void testRepositoryExists() throws Exception
     {
         File f = new File(uploadService.getRepository());
         assertTrue(f.exists());
+    }
+    
+    // This is Apache Commons, but we want to make be really sure it runs clean in Fulcrum
+    @Test
+    public void testUploadEncoding() throws Exception {
+        HttpServletRequest request = getMockRequest();
+        when(request.getContentType()).thenReturn("multipart/form-data; boundary=boundary");
+        when(request.getContentLength()).thenReturn(-1);// -1
+        when(request.getMethod()).thenReturn("post");
+        String testData= "Überfülle=\r\nf";
+        //override default settings
+        requestFormData( request, testData );
+        assertTrue(uploadService.isMultipart( request ));
+        List<FileItem> fil = uploadService.parseRequest( request );
+        assertNotNull(fil);
+        assertTrue( fil.size() >0);
+        FileItem fi = fil.get( 0 );
+        System.out.println( fi.getString() );
+        assertEquals(15,fi.getSize());
+        // default is ISO-8859-1
+        assertTrue("data string:'" +fi.getString("UTF-8") +"' not as expected", fi.getString("UTF-8").startsWith( "Überfülle" ));
+        
+        //reset inputstream
+        requestFormData( request, testData);
+        FileItemIterator fii = uploadService.getItemIterator( request );
+        assertNotNull(fii);
+        assertTrue( fii.hasNext());
+        assertNotNull(fii.next());
+    }
 
+    private void requestFormData( HttpServletRequest request, String data)
+        throws IOException
+    {
+        String example ="--boundary\r\n"
+            + "Content-Disposition: form-data; name=\"uploadedfile\"; filename=\"12345678.txt\"\r\n"
+            + "Content-Type: text/plain\r\n"
+//            + "Content-Transfer-Encoding: UTF-8\r\n"
+            + "\r\n"
+            + data 
+            + "\r\n--boundary--\r\n";
+        final ByteArrayInputStream is = new ByteArrayInputStream (example.getBytes());// "UTF-8"
+        when(request.getInputStream()).thenReturn(new ServletInputStream() {
+                @Override
+                public int read() throws IOException {
+                    return is.read();
+                }
+            });
+    }
+    
+    protected Map<String,Object> attributes = new HashMap<String,Object>();
+    protected int maxInactiveInterval = 0;
+    // from Turbine org.apache.turbine.test.BaseTestCase, should be later in Fulcrum Testcontainer BaseUnit4Test
+    protected HttpServletRequest getMockRequest()
+    {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpSession session = mock(HttpSession.class);
+
+        doAnswer(new Answer<Object>()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable
+            {
+                String key = (String) invocation.getArguments()[0];
+                return attributes.get(key);
+            }
+        }).when(session).getAttribute(anyString());
+
+        doAnswer(new Answer<Object>()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable
+            {
+                String key = (String) invocation.getArguments()[0];
+                Object value = invocation.getArguments()[1];
+                attributes.put(key, value);
+                return null;
+            }
+        }).when(session).setAttribute(anyString(), any());
+
+        when(session.getMaxInactiveInterval()).thenReturn(maxInactiveInterval);
+
+        doAnswer(new Answer<Integer>()
+        {
+            @Override
+            public Integer answer(InvocationOnMock invocation) throws Throwable
+            {
+                return Integer.valueOf(maxInactiveInterval);
+            }
+        }).when(session).getMaxInactiveInterval();
+
+        doAnswer(new Answer<Object>()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable
+            {
+                Integer value = (Integer) invocation.getArguments()[0];
+                maxInactiveInterval = value.intValue();
+                return null;
+            }
+        }).when(session).setMaxInactiveInterval(anyInt());
+
+        when(session.isNew()).thenReturn(true);
+        when(request.getSession()).thenReturn(session);
+
+        when(request.getServerName()).thenReturn("bob");
+        when(request.getProtocol()).thenReturn("http");
+        when(request.getScheme()).thenReturn("scheme");
+        when(request.getPathInfo()).thenReturn("damn");
+        when(request.getServletPath()).thenReturn("damn2");
+        when(request.getContextPath()).thenReturn("wow");
+        when(request.getContentType()).thenReturn("html/text");
+
+        when(request.getCharacterEncoding()).thenReturn("US-ASCII");
+        when(request.getServerPort()).thenReturn(8080);
+        when(request.getLocale()).thenReturn(Locale.US);
+
+        when(request.getHeader("Content-type")).thenReturn("html/text");
+        when(request.getHeader("Accept-Language")).thenReturn("en-US");
+
+        Vector<String> v = new Vector<String>();
+        when(request.getParameterNames()).thenReturn(v.elements());
+        return request;
     }
 }
