@@ -1,6 +1,5 @@
 package org.apache.fulcrum.upload;
 
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -20,7 +19,6 @@ package org.apache.fulcrum.upload;
  * under the License.
  */
 
-
 import java.util.List;
 
 import javax.portlet.ActionRequest;
@@ -31,11 +29,11 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemIterator;
 
 /**
- * <p> This service handles parsing <code>multipart/form-data</code>
- * POST requests and turning them into form fields and uploaded files.
- * This can be either performed automatically by the {@link
- * org.apache.fulcrum.parser.ParameterParser} or manually by an user
- * defined {@link org.apache.turbine.modules.Action}.
+ * <p>
+ * This service handles parsing <code>multipart/form-data</code> POST requests
+ * and turning them into form fields and uploaded files. This can be either
+ * performed automatically by the <code>org.apache.fulcrum.parser.ParameterParser</code> or manually by a user
+ * defined <code>org.apache.turbine.modules.Action</code>.
  *
  * @author <a href="mailto:Rafal.Krzewski@e-point.pl">Rafal Krzewski</a>
  * @author <a href="mailto:dlr@collab.net">Daniel Rall</a>
@@ -44,276 +42,280 @@ import org.apache.commons.fileupload.FileItemIterator;
 public interface UploadService
 
 {
-    /** Avalon Identifier **/
-    String ROLE = UploadService.class.getName();
+	/** Avalon Identifier **/
+	String ROLE = UploadService.class.getName();
 
-    /**
-     * HTTP header.
-     */
-    String CONTENT_TYPE = "Content-type";
+	/**
+	 * HTTP header.
+	 */
+	String CONTENT_TYPE = "Content-type";
 
-    /**
-     * HTTP header.
-     */
-    String CONTENT_DISPOSITION = "Content-disposition";
+	/**
+	 * HTTP header.
+	 */
+	String CONTENT_DISPOSITION = "Content-disposition";
 
-    /**
-     * HTTP header base type.
-     */
-    String MULTIPART = "multipart";
+	/**
+	 * HTTP header base type.
+	 */
+	String MULTIPART = "multipart";
 
-    /**
-     * HTTP header base type modifier.
-     */
-    String FORM_DATA = "form-data";
+	/**
+	 * HTTP header base type modifier.
+	 */
+	String FORM_DATA = "form-data";
 
-    /**
-     * HTTP header base type modifier.
-     */
-    String MIXED = "mixed";
+	/**
+	 * HTTP header base type modifier.
+	 */
+	String MIXED = "mixed";
 
-    /**
-     * HTTP header.
-     */
-    String MULTIPART_FORM_DATA =
-        MULTIPART + '/' + FORM_DATA;
+	/**
+	 * HTTP header.
+	 */
+	String MULTIPART_FORM_DATA = MULTIPART + '/' + FORM_DATA;
 
-    /**
-     * HTTP header.
-     */
-    String MULTIPART_MIXED = MULTIPART + '/' + MIXED;
+	/**
+	 * HTTP header.
+	 */
+	String MULTIPART_MIXED = MULTIPART + '/' + MIXED;
 
-    /**
-     * The request parameter name for overriding 'repository' property
-     * (path).
-     */
-    String REPOSITORY_PARAMETER = "path";
+	/**
+	 * The request parameter name for overriding 'repository' property (path).
+	 */
+	String REPOSITORY_PARAMETER = "path";
 
-    /**
-     * The key in UploadService properties in
-     * TurbineResources.properties 'repository' property.
-     */
-    String REPOSITORY_KEY = "repository";
+	/**
+	 * The key in UploadService properties in TurbineResources.properties
+	 * 'repository' property.
+	 */
+	String REPOSITORY_KEY = "repository";
 
-    /**
-     * <p> The default value of 'repository' property (.).  This is
-     * the directory where uploaded files will get stored temporarily.
-     * Note that "."  is whatever the servlet container chooses to be
-     * it's 'current directory'.
-     */
-    String REPOSITORY_DEFAULT = ".";
+	/**
+	 * <p>
+	 * The default value of 'repository' property (.). This is the directory where
+	 * uploaded files will get stored temporarily. Note that "." is whatever the
+	 * servlet container chooses to be it's 'current directory'.
+	 */
+	String REPOSITORY_DEFAULT = ".";
 
-    /**
-     * w The key in UploadService properties in
-     * service configuration 'sizeMax' property.
-     */
-    String SIZE_MAX_KEY = "sizeMax";
+	/**
+	 * w The key in UploadService properties in service configuration 'sizeMax'
+	 * property.
+	 */
+	String SIZE_MAX_KEY = "sizeMax";
 
-    /**
-     * <p> The default value of 'sizMax' property (1 megabyte =
-     * 1048576 bytes).  This is the maximum size of POST request that
-     * will be parsed by the uploader.  If you need to set specific
-     * limits for your users, set this property to the largest limit
-     * value, and use an action + no auto upload to enforce limits.
-     *
-     */
-    int SIZE_MAX_DEFAULT = 1048576;
+	/**
+	 * <p>
+	 * The default value of 'sizMax' property (1 megabyte = 1048576 bytes). This is
+	 * the maximum size of POST request that will be parsed by the uploader. If you
+	 * need to set specific limits for your users, set this property to the largest
+	 * limit value, and use an action + no auto upload to enforce limits.
+	 *
+	 */
+	int SIZE_MAX_DEFAULT = 1048576;
 
-    /**
-     * The key in UploadService properties in
-     * TurbineResources.properties 'sizeThreshold' property.
-     */
-    String SIZE_THRESHOLD_KEY = "sizeThreshold";
+	/**
+	 * The key in UploadService properties in TurbineResources.properties
+	 * 'sizeThreshold' property.
+	 */
+	String SIZE_THRESHOLD_KEY = "sizeThreshold";
 
-    /**
-     * <p> The default value of 'sizeThreshold' property (10
-     * kilobytes = 10240 bytes).  This is the maximum size of a POST
-     * request that will have it's components stored temporarily in
-     * memory, instead of disk.
-     */
-    int SIZE_THRESHOLD_DEFAULT = 10240;
+	/**
+	 * <p>
+	 * The default value of 'sizeThreshold' property (10 kilobytes = 10240 bytes).
+	 * This is the maximum size of a POST request that will have it's components
+	 * stored temporarily in memory, instead of disk.
+	 */
+	int SIZE_THRESHOLD_DEFAULT = 10240;
 
-    /**
-     * The key in UploadService properties in
-     * TurbineResources.properties 'headerEncoding' property.
-     */
-    String HEADER_ENCODING_KEY = "headerEncoding";
+	/**
+	 * The key in UploadService properties in TurbineResources.properties
+	 * 'headerEncoding' property.
+	 */
+	String HEADER_ENCODING_KEY = "headerEncoding";
 
-    /**
-     * <p> The default value of 'headerEncoding' property (.).
-     * The value has been decided by copying from DiskFileItem class
-     */
-    String HEADER_ENCODING_DEFAULT = "ISO-8859-1";
+	/**
+	 * <p>
+	 * The default value of 'headerEncoding' property (.). The value has been
+	 * decided by copying from DiskFileItem class
+	 */
+	String HEADER_ENCODING_DEFAULT = "ISO-8859-1";
 
-    /**
-     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
-     * compliant <code>multipart/form-data</code> stream.</p>
-     *
-     * @param req The servlet request to be parsed.
-     * @exception ServiceException Problems reading/parsing the
-     * request or storing the uploaded file(s).
-     */
-    List<FileItem> parseRequest(HttpServletRequest req)
-        throws ServiceException;
+	/**
+	 * <p>
+	 * Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a> compliant
+	 * <code>multipart/form-data</code> stream.
+	 * </p>
+	 *
+	 * @param req The servlet request to be parsed.
+	 * @return list of file items
+	 * @throws ServiceException Problems reading/parsing the request or storing
+	 *                             the uploaded file(s).
+	 */
+	List<FileItem> parseRequest(HttpServletRequest req) throws ServiceException;
 
-    /**
-     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
-     * compliant <code>multipart/form-data</code> stream.</p>
-     *
-     * @param req The servlet request to be parsed.
-     * @param path The location where the files should be stored.
-     * @exception ServiceException Problems reading/parsing the
-     * request or storing the uploaded file(s).
-     */
-    List<FileItem> parseRequest(HttpServletRequest req, String path)
-        throws ServiceException;
+	/**
+	 * <p>
+	 * Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a> compliant
+	 * <code>multipart/form-data</code> stream.
+	 * </p>
+	 *
+	 * @param req  The servlet request to be parsed.
+	 * @param path The location where the files should be stored.
+	 * @return List of FileItem parts
+	 * @throws ServiceException Problems reading/parsing the request or storing
+	 *                             the uploaded file(s).
+	 */
+	List<FileItem> parseRequest(HttpServletRequest req, String path) throws ServiceException;
 
-    /**
-     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
-     * compliant <code>multipart/form-data</code> stream.</p>
-     *
-     * @param req The servlet request to be parsed.
-     * @param sizeThreshold the max size in bytes to be stored in memory
-     * @param sizeMax the maximum allowed upload size in bytes
-     * @param path The location where the files should be stored.
-     * @exception ServiceException Problems reading/parsing the
-     * request or storing the uploaded file(s).
-     */
-    List<FileItem> parseRequest(HttpServletRequest req, int sizeThreshold,
-        int sizeMax, String path)
-        throws ServiceException;
+	/**
+	 * <p>
+	 * Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a> compliant
+	 * <code>multipart/form-data</code> stream.
+	 * </p>
+	 *
+	 * @param req           The servlet request to be parsed.
+	 * @param sizeThreshold the max size in bytes to be stored in memory
+	 * @param sizeMax       the maximum allowed upload size in bytes
+	 * @param path          The location where the files should be stored.
+	 * @return List of FileItem parts
+	 * @throws ServiceException Problems reading/parsing the request or storing
+	 *                             the uploaded file(s).
+	 */
+	List<FileItem> parseRequest(HttpServletRequest req, int sizeThreshold, int sizeMax, String path)
+			throws ServiceException;
 
+	/**
+	 * Processes an <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+	 * compliant <code>multipart/form-data</code> stream.
+	 *
+	 * @param req The servlet request to be parsed.
+	 *
+	 * @return An iterator to instances of <code>FileItemStream</code> parsed from
+	 *         the request, in the order that they were transmitted.
+	 *
+	 * @throws ServiceException if there are problems reading/parsing the request or
+	 *                          storing files. This may also be a network error
+	 *                          while communicating with the client or a problem
+	 *                          while storing the uploaded content.
+	 */
+	FileItemIterator getItemIterator(HttpServletRequest req) throws ServiceException;
 
-    /**
-     * Processes an <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
-     * compliant <code>multipart/form-data</code> stream.
-     *
-     * @param req The servlet request to be parsed.
-     *
-     * @return An iterator to instances of <code>FileItemStream</code>
-     *         parsed from the request, in the order that they were
-     *         transmitted.
-     *
-     * @throws ServiceException if there are problems reading/parsing
-     *                             the request or storing files. This
-     *                             may also be a network error while
-     *                             communicating with the client or a
-     *                             problem while storing the uploaded
-     *                             content.
-     */
-    FileItemIterator getItemIterator(HttpServletRequest req) throws ServiceException;
+	/**
+	 * <p>
+	 * Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a> compliant
+	 * <code>multipart/form-data</code> stream.
+	 * </p>
+	 *
+	 * @param req The portlet request to be parsed.
+	 * @return List of FileItem parts
+	 * @throws ServiceException Problems reading/parsing the request or storing
+	 *                             the uploaded file(s).
+	 */
+	List<FileItem> parseRequest(ActionRequest req) throws ServiceException;
 
+	/**
+	 * <p>
+	 * Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a> compliant
+	 * <code>multipart/form-data</code> stream.
+	 * </p>
+	 *
+	 * @param req  The portlet request to be parsed.
+	 * @param path The location where the files should be stored.
+	 * @return List of FileItem parts
+	 * @throws ServiceException Problems reading/parsing the request or storing
+	 *                             the uploaded file(s).
+	 */
+	List<FileItem> parseRequest(ActionRequest req, String path) throws ServiceException;
 
-    /**
-     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
-     * compliant <code>multipart/form-data</code> stream.</p>
-     *
-     * @param req The portlet request to be parsed.
-     * @exception ServiceException Problems reading/parsing the
-     * request or storing the uploaded file(s).
-     */
-    List<FileItem> parseRequest(ActionRequest req)
-        throws ServiceException;
+	/**
+	 * <p>
+	 * Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a> compliant
+	 * <code>multipart/form-data</code> stream.
+	 * </p>
+	 *
+	 * @param req           The portlet request to be parsed.
+	 * @param sizeThreshold the max size in bytes to be stored in memory
+	 * @param sizeMax       the maximum allowed upload size in bytes
+	 * @param path          The location where the files should be stored.
+	 * @return The list of FileItem parts uploaded 
+	 * @throws ServiceException Problems reading/parsing the request or storing
+	 *                             the uploaded file(s).
+	 */
+	List<FileItem> parseRequest(ActionRequest req, int sizeThreshold, int sizeMax, String path) throws ServiceException;
 
-    /**
-     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
-     * compliant <code>multipart/form-data</code> stream.</p>
-     *
-     * @param req The portlet request to be parsed.
-     * @param path The location where the files should be stored.
-     * @exception ServiceException Problems reading/parsing the
-     * request or storing the uploaded file(s).
-     */
-    List<FileItem> parseRequest(ActionRequest req, String path)
-        throws ServiceException;
+	/**
+	 * Processes an <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+	 * compliant <code>multipart/form-data</code> stream.
+	 *
+	 * @param req The portlet request to be parsed.
+	 *
+	 * @return An iterator to instances of <code>FileItemStream</code> parsed from
+	 *         the request, in the order that they were transmitted.
+	 *
+	 * @throws ServiceException if there are problems reading/parsing the request or
+	 *                          storing files. This may also be a network error
+	 *                          while communicating with the client or a problem
+	 *                          while storing the uploaded content.
+	 */
+	FileItemIterator getItemIterator(ActionRequest req) throws ServiceException;
 
-    /**
-     * <p>Parses a <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
-     * compliant <code>multipart/form-data</code> stream.</p>
-     *
-     * @param req The portlet request to be parsed.
-     * @param sizeThreshold the max size in bytes to be stored in memory
-     * @param sizeMax the maximum allowed upload size in bytes
-     * @param path The location where the files should be stored.
-     * @exception ServiceException Problems reading/parsing the
-     * request or storing the uploaded file(s).
-     */
-    List<FileItem> parseRequest(ActionRequest req, int sizeThreshold,
-        int sizeMax, String path)
-        throws ServiceException;
+	/**
+	 * <p>
+	 * Retrieves the value of <code>size.max</code> property of the
+	 * {@link org.apache.fulcrum.upload.UploadService}.
+	 *
+	 * @return The maximum upload size.
+	 */
+	long getSizeMax();
 
+	/**
+	 * <p>
+	 * Retrieves the value of <code>size.threshold</code> property of
+	 * {@link org.apache.fulcrum.upload.UploadService}.
+	 *
+	 * @return The threshold beyond which files are written directly to disk.
+	 */
+	long getSizeThreshold();
 
-    /**
-     * Processes an <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
-     * compliant <code>multipart/form-data</code> stream.
-     *
-     * @param req The portlet request to be parsed.
-     *
-     * @return An iterator to instances of <code>FileItemStream</code>
-     *         parsed from the request, in the order that they were
-     *         transmitted.
-     *
-     * @throws ServiceException if there are problems reading/parsing
-     *                             the request or storing files. This
-     *                             may also be a network error while
-     *                             communicating with the client or a
-     *                             problem while storing the uploaded
-     *                             content.
-     */
-    FileItemIterator getItemIterator(ActionRequest req) throws ServiceException;
+	/**
+	 * <p>
+	 * Retrieves the value of the <code>repository</code> property of
+	 * {@link org.apache.fulcrum.upload.UploadService}.
+	 *
+	 * @return The repository.
+	 */
+	String getRepository();
 
+	/**
+	 * <p>
+	 * Retrieves the value of the <code>headerEncoding</code> property of
+	 * {@link org.apache.fulcrum.upload.UploadService}.
+	 *
+	 * @return Returns the headerEncoding.
+	 */
+	String getHeaderEncoding();
 
-    /**
-     * <p> Retrieves the value of <code>size.max</code> property of the
-     * {@link org.apache.fulcrum.upload.UploadService}.
-     *
-     * @return The maximum upload size.
-     */
-    long getSizeMax();
+	/**
+	 * Utility method that determines whether the request contains multipart
+	 * content.
+	 *
+	 * @param req The servlet request to be evaluated. Must be non-null.
+	 *
+	 * @return <code>true</code> if the request is multipart; <code>false</code>
+	 *         otherwise.
+	 */
+	boolean isMultipart(HttpServletRequest req);
 
-    /**
-     * <p> Retrieves the value of <code>size.threshold</code> property of
-     * {@link org.apache.fulcrum.upload.UploadService}.
-     *
-     * @return The threshold beyond which files are written directly to disk.
-     */
-    long getSizeThreshold();
-
-    /**
-     * <p> Retrieves the value of the <code>repository</code> property of
-     * {@link org.apache.fulcrum.upload.UploadService}.
-     *
-     * @return The repository.
-     */
-    String getRepository();
-
-    /**
-     * <p> Retrieves the value of the <code>headerEncoding</code> property of
-     * {@link org.apache.fulcrum.upload.UploadService}.
-     *
-     * @return Returns the headerEncoding.
-     */
-    String getHeaderEncoding();
-
-    /**
-     * Utility method that determines whether the request contains multipart
-     * content.
-     *
-     * @param req The servlet request to be evaluated. Must be non-null.
-     *
-     * @return <code>true</code> if the request is multipart;
-     *         <code>false</code> otherwise.
-     */
-    boolean isMultipart(HttpServletRequest req);
-
-    /**
-     * Utility method that determines whether the request contains multipart
-     * content.
-     *
-     * @param req The portlet request to be evaluated. Must be non-null.
-     *
-     * @return <code>true</code> if the request is multipart;
-     *         <code>false</code> otherwise.
-     */
-    boolean isMultipart(ActionRequest req);
+	/**
+	 * Utility method that determines whether the request contains multipart
+	 * content.
+	 *
+	 * @param req The portlet request to be evaluated. Must be non-null.
+	 *
+	 * @return <code>true</code> if the request is multipart; <code>false</code>
+	 *         otherwise.
+	 */
+	boolean isMultipart(ActionRequest req);
 }
