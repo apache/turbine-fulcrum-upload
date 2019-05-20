@@ -30,7 +30,15 @@
   <inceptionYear>2005</inceptionYear>
   <description>Fulcrum Upload Service</description>
   <url>http://turbine.apache.org/fulcrum/fulcrum-upload</url>
-		
+
+  <!-- Required for staging to work -->
+  <distributionManagement>
+     <site>
+        <id>turbine.apache.org</id>
+        <url>https://turbine.apache.org/fulcrum/fulcrum-upload/</url>
+     </site>
+  </distributionManagement>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/turbine/fulcrum/trunk/upload/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/turbine/fulcrum/trunk/upload/</developerConnection>
@@ -134,6 +142,9 @@
 
   <properties>
     <turbine.site.path>fulcrum/fulcrum-upload</turbine.site.path>
+    <turbine.scmPubCheckoutDirectory>${turbine.site.cache}/fulcrum/upload</turbine.scmPubCheckoutDirectory>
+    <turbine.site.cache>${project.build.directory}/turbine-sites</turbine.site.cache>
+    <siteContent.path>${project.build.directory}/staging</siteContent.path><!-- default stagingSiteURL -->
    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>  
 	
