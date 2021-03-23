@@ -1,9 +1,9 @@
 package org.apache.fulcrum.upload;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -49,9 +49,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.avalon.framework.component.ComponentException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.fulcrum.testcontainer.BaseUnit4Test;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.fulcrum.testcontainer.BaseUnit5Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 /**
@@ -60,12 +60,12 @@ import org.mockito.stubbing.Answer;
  * @author <a href="epugh@upstate.com">Eric Pugh</a>
  * @version $Id$
  */
-public class UploadServiceTest extends BaseUnit4Test
+public class UploadServiceTest extends BaseUnit5Test
 {
     private UploadService uploadService = null;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception
     {
         try
@@ -107,7 +107,7 @@ public class UploadServiceTest extends BaseUnit4Test
         System.out.println( fi.getString() );
         assertEquals(15,fi.getSize());
         // default is ISO-8859-1
-        assertTrue("data string:'" +fi.getString("UTF-8") +"' not as expected", fi.getString("UTF-8").startsWith( "Überfülle" ));
+        assertTrue( fi.getString("UTF-8").startsWith( "Überfülle" ), "data string:'" +fi.getString("UTF-8") +"' not as expected");
         
         //reset inputstream
         requestFormData( request, testData);
@@ -217,7 +217,7 @@ public class UploadServiceTest extends BaseUnit4Test
         when(request.getContextPath()).thenReturn("wow");
         when(request.getContentType()).thenReturn("html/text");
 
-        when(request.getCharacterEncoding()).thenReturn("US-ASCII");
+        when(request.getCharacterEncoding()).thenReturn("UTF-8");
         when(request.getServerPort()).thenReturn(8080);
         when(request.getLocale()).thenReturn(Locale.US);
 
