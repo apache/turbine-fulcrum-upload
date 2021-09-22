@@ -24,7 +24,7 @@
   </properties>
 
   <body>
-    <release version="1.0.6" date="in SVN">
+    <release version="1.0.6" date="in GIT">
       <action dev="tv" type="add">
         Add methods to handle portlet upload requests
       </action>
