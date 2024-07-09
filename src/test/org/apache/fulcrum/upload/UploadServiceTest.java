@@ -35,20 +35,21 @@ import java.io.ByteArrayInputStream;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.avalon.framework.component.ComponentException;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.FileItemInputIterator;
 import org.apache.fulcrum.testcontainer.BaseUnit5Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -107,11 +108,11 @@ public class UploadServiceTest extends BaseUnit5Test
         System.out.println( fi.getString() );
         assertEquals(15,fi.getSize());
         // default is ISO-8859-1
-        assertTrue( fi.getString("UTF-8").startsWith( "Überfülle" ), "data string:'" +fi.getString("UTF-8") +"' not as expected");
+        assertTrue( fi.getString(StandardCharsets.UTF_8).startsWith( "Überfülle" ), "data string:'" +fi.getString(StandardCharsets.UTF_8) +"' not as expected");
         
         //reset inputstream
         requestFormData( request, testData);
-        FileItemIterator fii = uploadService.getItemIterator( request );
+        FileItemInputIterator fii = uploadService.getItemIterator( request );
         assertNotNull(fii);
         assertTrue( fii.hasNext());
         assertNotNull(fii.next());
