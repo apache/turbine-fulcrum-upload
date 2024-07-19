@@ -71,8 +71,19 @@ public class DefaultUploadService extends AbstractLogEnabled
     /** A File Item Factory object for the actual uploading */
     private DiskFileItemFactory itemFactory;
 
+    /**
+     * default 0, then a default buffer size will be used, e.g. 8192.
+     */
     private int sizeThreshold;
-    private int sizeMax;
+    
+    /* sizeMax default -1 = no limit.*/ 
+    private int sizeMax = -1 ;
+    
+    /* fileSizeMax default -1 = no limit.*/ 
+    private long fileSizeMax = -1l;
+    
+    /* fileCountMax default -1 = no limit.*/ 
+    private int fileCountMax = -1;
 
     private String repositoryPath;
     private String headerEncoding;
@@ -81,6 +92,7 @@ public class DefaultUploadService extends AbstractLogEnabled
      * The application root
      */
     private String applicationRoot;
+
 
     /**
      * The maximum allowed upload size
@@ -116,6 +128,33 @@ public class DefaultUploadService extends AbstractLogEnabled
     public String getHeaderEncoding()
     {
         return headerEncoding;
+    }
+    
+    /**
+     * Follows <a href="http://www.ietf.org/rfc/rfc1867.txt">RFC 1867</a>
+     * 
+     * @param req
+     * @param factory
+     * @return a spec compliant servlet
+     * @throws ServiceException
+     */
+    public JakartaServletFileUpload getDefaultFileUpload(HttpServletRequest req, DiskFileItemFactory factory)
+    {
+        JakartaServletFileUpload fileUpload = new JakartaServletFileUpload<>( factory );
+        
+        fileUpload.setSizeMax( sizeMax );
+        fileUpload.setHeaderCharset( null );
+        
+        fileUpload.setFileSizeMax( fileSizeMax );
+        fileUpload.setFileCountMax( fileCountMax );
+
+        if (getHeaderEncoding() != null)
+        {
+            Charset uploadCharset = getHeaderEncoding().equals( "UTF-8" ) ? StandardCharsets.UTF_8
+                    : getHeaderEncoding().startsWith( "ISO-8859" ) ? StandardCharsets.ISO_8859_1 : StandardCharsets.UTF_8;
+            fileUpload.setHeaderCharset( uploadCharset );
+        }
+        return fileUpload;
     }
 
     /**
@@ -198,6 +237,9 @@ public class DefaultUploadService extends AbstractLogEnabled
             JakartaServletFileUpload fileUpload = new JakartaServletFileUpload<>( factory );
             fileUpload.setSizeMax( sizeMax );
             fileUpload.setHeaderCharset( null );
+            
+            fileUpload.setFileSizeMax( fileSizeMax );
+            fileUpload.setFileCountMax( fileCountMax );
 
             if (getHeaderEncoding() != null)
             {
@@ -327,5 +369,34 @@ public class DefaultUploadService extends AbstractLogEnabled
     public void contextualize(Context context) throws ContextException
     {
         this.applicationRoot = context.get( "urn:avalon:home" ).toString();
+    }
+
+    /**
+     * The maximum allowed size of a sinlge file upload  
+     * @return the maximum size
+     */
+    @Override
+    public long getFileSizeMax()
+    {
+        return fileSizeMax;
+    }
+
+    public void setFileSizeMax(long fileSizeMax)
+    {
+        this.fileSizeMax = fileSizeMax;
+    }
+
+    /**
+     * The maximum number of files allowed per request.
+     * @return maximum number of files allowed per request
+     */
+    public long getFileCountMax()
+    {
+        return fileCountMax;
+    }
+
+    public void setFileCountMax(int fileCountMax)
+    {
+        this.fileCountMax = fileCountMax;
     }
 }

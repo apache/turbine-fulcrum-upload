@@ -248,4 +248,10 @@ public interface UploadService
 	 */
 	boolean isMultipart(HttpServletRequest req);
 
+    /**
+     * The maximum allowed size of a sinlge file upload  
+     * @return the maximum size
+     */
+    long getFileSizeMax();
+
 }
